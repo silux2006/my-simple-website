@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Drive Links Gallery</title>
+  <style>
+    body { font-family: Arial; margin: 20px; background: #f4f6f9; }
+    h1 { text-align: center; color: #333; }
+    .category { margin-top: 30px; }
+    .cards { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 10px; }
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      width: 250px;
+      text-align: center;
+      word-break: break-word;
+    }
+    .card a { text-decoration: none; color: #007BFF; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>📂 Drive Links Gallery</h1>
+  <div id="gallery"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_-TwXZL8VLMIce_NDYZfw7YOtfBDOWZM",
+      authDomain: "higz-326a5.firebaseapp.com",
+      projectId: "higz-326a5",
+      storageBucket: "higz-326a5.firebasestorage.app",
+      messagingSenderId: "41734577103",
+      appId: "1:41734577103:web:376ee5b71ce523362f50ba"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadGallery() {
+      const querySnapshot = await getDocs(collection(db, "driveLinks"));
+      const links = [];
+      querySnapshot.forEach(doc => links.push(doc.data()));
+
+      // Group by category
+      const grouped = {};
+      links.forEach(item => {
+        if (!grouped[item.category]) grouped[item.category] = [];
+        grouped[item.category].push(item);
+      });
+
+      const galleryDiv = document.getElementById("gallery");
+      let html = "";
+
+      for (const category in grouped) {
+        html += `<div class="category"><h2>${category}</h2><div class="cards">`;
+        grouped[category].forEach(item => {
+          html += `<div class="card"><p>${item.title}</p><a href="${item.url}" target="_blank">Open Link</a></div>`;
+        });
+        html += `</div></div>`;
+      }
+
+      galleryDiv.innerHTML = html;
+    }
+
+    loadGallery();
+  </script>
+</body>
+</html>
