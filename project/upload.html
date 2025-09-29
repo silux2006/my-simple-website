@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Drive Link</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #e0f7fa, #ffffff);
+    }
+    h1 {
+      text-align: center;
+      color: #007BFF;
+      margin-top: 30px;
+      text-shadow: 1px 1px 2px #ccc;
+    }
+    form {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    input, select, button {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background: #007BFF;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <h1>📤 Upload a Drive Link</h1>
+
+  <form id="uploadForm">
+    <input type="text" id="title" placeholder="Enter title" required>
+    
+    <select id="category" required>
+      <option value="" disabled selected>Select Category</option>
+      <option value="Math">Math</option>
+      <option value="Physics">Physics</option>
+      <option value="Chemistry">Chemistry</option>
+      <option value="Computer Science">Computer Science</option>
+      <option value="Others">Others</option>
+    </select>
+
+    <input type="text" id="link" placeholder="Paste Google Drive link" required>
+    <button type="submit">Upload</button>
+  </form>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_-TwXZL8VLMIce_NDYZfw7YOtfBDOWZM",
+      authDomain: "higz-326a5.firebaseapp.com",
+      projectId: "higz-326a5",
+      storageBucket: "higz-326a5.firebasestorage.app",
+      messagingSenderId: "41734577103",
+      appId: "1:41734577103:web:376ee5b71ce523362f50ba"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("uploadForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value.trim();
+      const category = document.getElementById("category").value;
+      const link = document.getElementById("link").value.trim();
+
+      if (!title || !category || !link) return alert("All fields are required!");
+
+      await addDoc(collection(db, "driveLinks"), {
+        title,
+        category,
+        url: link,
+        timestamp: Date.now()
+      });
+
+      alert("Link uploaded successfully!");
+      form.reset();
+    });
+  </script>
+</body>
+</html>
